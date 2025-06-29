@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/IceFireLabs/DANP-Engine/pkg/ipfs"
@@ -45,18 +46,29 @@ func (w *WASMEngine) LoadModule(ctx context.Context, path string) error {
 
 	manifest := extism.Manifest{Wasm: []extism.Wasm{}}
 
-	// Load from file if exists
-	if _, err := os.Stat(path); err == nil {
-		log.Printf("Loading WASM module from filesystem: %s", path)
-		manifest.Wasm = append(manifest.Wasm, extism.WasmFile{Path: path})
-	} else if w.config.IPFS.Enable {
-		log.Printf("Loading WASM module from IPFS: %s", path)
-		// Try loading from IPFS if configured
+	// Handle protocol prefixes
+	if strings.HasPrefix(path, "file://") {
+		// File protocol - strip prefix and load from filesystem
+		filePath := strings.TrimPrefix(path, "file://")
+		if _, err := os.Stat(filePath); err == nil {
+			log.Printf("Loading WASM module from filesystem: %s", filePath)
+			manifest.Wasm = append(manifest.Wasm, extism.WasmFile{Path: filePath})
+		} else {
+			return fmt.Errorf("WASM module not found: %s", filePath)
+		}
+	} else if strings.HasPrefix(path, "IPFS://") {
+		// IPFS protocol - requires IPFS to be enabled
+		if !w.config.IPFS.Enable {
+			return fmt.Errorf("IPFS support is not enabled")
+		}
+		cid := strings.TrimPrefix(path, "IPFS://")
+		log.Printf("Loading WASM module from IPFS CID: %s", cid)
+		
 		ipfsC := ipfs.NewIPFSClient(w.config.IPFS.LassieNet.Scheme,
 			w.config.IPFS.LassieNet.Host,
 			w.config.IPFS.LassieNet.Port)
 
-		data, err := ipfs.GetDATAFromIPFSCID(ipfsC, path) // Using path as CID
+		data, err := ipfs.GetDATAFromIPFSCID(ipfsC, cid)
 		if err != nil {
 			return fmt.Errorf("failed to load WASM from IPFS: %w", err)
 		}
@@ -65,7 +77,27 @@ func (w *WASMEngine) LoadModule(ctx context.Context, path string) error {
 			manifest.Wasm = append(manifest.Wasm, extism.WasmData{Data: wasmData})
 		}
 	} else {
-		return fmt.Errorf("WASM module not found: %s", path)
+		// No protocol - try direct path (backward compatibility)
+		if _, err := os.Stat(path); err == nil {
+			log.Printf("Loading WASM module from filesystem: %s", path)
+			manifest.Wasm = append(manifest.Wasm, extism.WasmFile{Path: path})
+		} else if w.config.IPFS.Enable {
+			log.Printf("Loading WASM module from IPFS (direct CID): %s", path)
+			ipfsC := ipfs.NewIPFSClient(w.config.IPFS.LassieNet.Scheme,
+				w.config.IPFS.LassieNet.Host,
+				w.config.IPFS.LassieNet.Port)
+
+			data, err := ipfs.GetDATAFromIPFSCID(ipfsC, path)
+			if err != nil {
+				return fmt.Errorf("failed to load WASM from IPFS: %w", err)
+			}
+
+			for _, wasmData := range data {
+				manifest.Wasm = append(manifest.Wasm, extism.WasmData{Data: wasmData})
+			}
+		} else {
+			return fmt.Errorf("WASM module not found: %s", path)
+		}
 	}
 
 	config := extism.PluginConfig{
