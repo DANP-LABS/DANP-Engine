@@ -3,19 +3,44 @@
 ![build](https://github.com/IceFireLabs/DANP-Engine/actions/workflows/build.yml/badge.svg)
 ![test](https://github.com/IceFireLabs/DANP-Engine/actions/workflows/test.yml/badge.svg)
 
-**DANP-Engine** is a trusted AI MCP runtime built on **IPFS**, **WASM**, **AI MCP Server** and **AI MCP Client**. The AI MCP tools modules are stored on decentralized IPFS immutable trusted storage. This innovative framework seamlessly integrates WebAssembly computing, IPFS storage, and AI Agent capabilities to deliver a robust, serverless solution for decentralized applications (dApps). Designed to empower developers with cutting-edge technologies, this project revolutionizes decentralized computing by combining the efficiency of WASM, the reliability of IPFS, and the intelligence of AI Agents.
+**DANP-Engine** is a trusted runtime for AI Model Context Protocol (MCP), providing a secure execution environment for decentralized AI tools and services. Built on four foundational technologies:
+
+- **IPFS**: Decentralized storage for immutable WASM modules and AI tools
+- **WASM**: Portable, sandboxed execution of AI workloads
+- **AI MCP Server**: Hosts and manages registered AI tools
+- **AI MCP Client**: Provides standardized access to AI capabilities
+
+As an MCP runtime, DANP-Engine enables:
+- Trusted execution of AI tools via WASM sandboxing
+- Decentralized hosting and discovery through IPFS
+- Standardized interfaces via MCP protocol
+- Secure multi-tenant operation with resource isolation
 
 ![image](https://github.com/user-attachments/assets/45bf263a-1624-49a5-b113-8d7e430a4d18)
 
 ---
 
-## Key Features and Components
+## Core Components and Features
 
-- **WebAssembly Computing**: Harness the power of WebAssembly for efficient, scalable, and portable computation within decentralized applications.
-- **IPFS Integration**: Utilize IPFS for secure, decentralized storage and retrieval of data, ensuring data integrity and availability.
-- **AI Agent Capabilities**: Empower your applications with intelligent decision-making, automation, and multi-agent control powered by AI.
-- **Serverless Architecture**: Embrace a serverless paradigm for flexible, cost-effective deployment of dApps, eliminating the complexities of traditional server management.
-- **Technical Support**: Benefit from seamless integration with **Filecoin-Lassie** for IPFS file retrieval, **Filecoin-IPLD-Go-Car** for IPFS Car file extraction, **Extism** for WASM plugin management, **wazero** for WASM virtual machine, and **Fiber** for high-performance HTTP server capabilities.
+### IPFS Integration Layer
+- **Decentralized Storage**: All WASM modules and AI tools are stored on IPFS with content addressing
+- **Immutable Artifacts**: Ensures tool integrity via cryptographic hashes
+- **Global Distribution**: Tools are available from any IPFS node worldwide
+
+### WASM Runtime Layer  
+- **Secure Sandboxing**: Isolates tool execution for safety
+- **Cross-platform**: Runs anywhere WASM is supported
+- **High Performance**: Near-native execution speed
+
+### AI MCP Server
+- **Tool Hosting**: Manages lifecycle of registered AI tools
+- **Discovery Service**: Enables tool lookup and metadata access  
+- **Execution Engine**: Runs WASM modules with resource controls
+
+### AI MCP Client  
+- **Standard Interface**: Uniform access to all registered tools
+- **Session Management**: Handles authentication and state
+- **Multi-client Support**: CLI, Web, and programmatic access
 
 ---
 ## System Architecture
