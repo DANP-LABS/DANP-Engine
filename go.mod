@@ -4,7 +4,6 @@ go 1.24.3
 
 require (
 	github.com/extism/go-sdk v1.7.1
-	github.com/go-chassis/go-archaius v1.5.6
 	github.com/ipfs/go-cid v0.5.0
 	github.com/ipfs/go-unixfsnode v1.10.1
 	github.com/ipld/go-car/v2 v2.14.3
@@ -13,17 +12,12 @@ require (
 	github.com/joho/godotenv v1.3.0
 	github.com/mark3labs/mcp-go v0.32.0
 	github.com/sashabaranov/go-openai v1.40.3
-	github.com/stretchr/testify v1.10.0
 	github.com/tetratelabs/wazero v1.9.0
-	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dylibso/observe-sdk/go v0.0.0-20240819160327-2d926c5d788a // indirect
-	github.com/fsnotify/fsnotify v1.4.7 // indirect
-	github.com/go-chassis/openlog v1.1.3 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/ianlancetaylor/demangle v0.0.0-20240805132620-81f5be970eca // indirect
@@ -42,7 +36,6 @@ require (
 	github.com/multiformats/go-multihash v0.2.3 // indirect
 	github.com/multiformats/go-varint v0.0.7 // indirect
 	github.com/petar/GoLLRB v0.0.0-20210522233825-ae3b015fd3e9 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/polydawn/refmt v0.89.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
@@ -56,5 +49,6 @@ require (
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
+	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	lukechampine.com/blake3 v1.4.1 // indirect
 )
