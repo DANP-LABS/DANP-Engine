@@ -5,6 +5,14 @@ server_config:
   max_connections: 100
   timeout: 30s
 
+ipfs:
+  enable: true  # Set to true to enable IPFS support
+  lassie_net:
+    scheme: "http"  # http or https
+    host: "127.0.0.1"
+    port: 31999
+  cids: []  # Optional list of pre-loaded CIDs
+
 llm_config:
   base_url: ""  # Optional base URL for API endpoints
   provider: "openai"  # Default provider
@@ -18,7 +26,8 @@ llm_config:
 # Defines WASM modules and their exposed MCP tools
 modules:
   - name: "hello"
-    wasm_path: "/home/corerman/ICODE/IceFireLabs/dANP-Engine/config/hello.wasm"  # Supports file:// or IPFS:// schemes
+    #wasm_path: "file:///home/corerman/ICODE/IceFireLabs/dANP-Engine/config/hello.wasm"  # Supports file:// or IPFS:// schemes
+    wasm_path: "IPFS://QmeDsaLTc8dAfPrQ5duC4j5KqPdGbcinEo5htDqSgU8u8Z"  # Supports file:// or IPFS:// schemes
     tools:
       - name: "say_hello"
         description: "Greet someone by name"
