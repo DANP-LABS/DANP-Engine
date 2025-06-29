@@ -24,22 +24,20 @@ jobs:
       with:
         go-version: '1.24'
 
-    - name: Build for ${{ matrix.platform }}
+    - name: Build DANP-MCP-CLIENT
       run: |
-        if [ "${{ matrix.platform }}" = "linux" ]; then
-          make build-linux
-        elif [ "${{ matrix.platform }}" = "windows" ]; then
-          make build-windows
-        elif [ "${{ matrix.platform }}" = "arm" ]; then
-          make build-arm
-        else
-          make build
-        fi
+        GOOS=${{ matrix.platform }} GOARCH=amd64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-CLIENT-${{ matrix.platform }}${{ matrix.platform == 'windows' && '.exe' || '' }} ./cmd/DANP-MCP-CLIENT
+
+    - name: Build DANP-MCP-SERVER
+      run: |
+        GOOS=${{ matrix.platform }} GOARCH=amd64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-SERVER-${{ matrix.platform }}${{ matrix.platform == 'windows' && '.exe' || '' }} ./cmd/DANP-MCP-SERVER
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: DANP-Engine-${{ matrix.platform }}
         path: |
-          bin/DANP-Engine-${{ matrix.platform }}*
-          bin/DANP-Engine-${{ matrix.platform }}.exe
+          bin/DANP-HTTP-${{ matrix.platform }}*
+          bin/DANP-MCP-CLIENT-${{ matrix.platform }}*
+          bin/DANP-MCP-SERVER-${{ matrix.platform }}*
+          bin/*.exe
