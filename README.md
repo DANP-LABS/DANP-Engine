@@ -16,32 +16,6 @@ As an MCP runtime, DANP-Engine enables:
 - Standardized interfaces via MCP protocol
 - Secure multi-tenant operation with resource isolation
 
-![image](https://github.com/user-attachments/assets/45bf263a-1624-49a5-b113-8d7e430a4d18)
-
----
-
-## Core Components and Features
-
-### IPFS Integration Layer
-- **Decentralized Storage**: All WASM modules and AI tools are stored on IPFS with content addressing
-- **Immutable Artifacts**: Ensures tool integrity via cryptographic hashes
-- **Global Distribution**: Tools are available from any IPFS node worldwide
-
-### WASM Runtime Layer  
-- **Secure Sandboxing**: Isolates tool execution for safety
-- **Cross-platform**: Runs anywhere WASM is supported
-- **High Performance**: Near-native execution speed
-
-### AI MCP Server
-- **Tool Hosting**: Manages lifecycle of registered AI tools
-- **Discovery Service**: Enables tool lookup and metadata access  
-- **Execution Engine**: Runs WASM modules with resource controls
-
-### AI MCP Client  
-- **Standard Interface**: Uniform access to all registered tools
-- **Session Management**: Handles authentication and state
-- **Multi-client Support**: CLI, Web, and programmatic access
-
 ---
 ## System Architecture
 
@@ -106,11 +80,36 @@ The architecture consists of four main layers:
 * Application Layer: Core functionalities exposed to developers including Edge AI, Trusted Computing and Edge Functions
 * Services Layer: Final output services that applications can consume (Compute, Storage, Network)
 
+---
+
+## Core Components and Features
+
+### IPFS Integration Layer
+- **Decentralized Storage**: All WASM modules and AI tools are stored on IPFS with content addressing
+- **Immutable Artifacts**: Ensures tool integrity via cryptographic hashes
+- **Global Distribution**: Tools are available from any IPFS node worldwide
+
+### WASM Runtime Layer  
+- **Secure Sandboxing**: Isolates tool execution for safety
+- **Cross-platform**: Runs anywhere WASM is supported
+- **High Performance**: Near-native execution speed
+
+### AI MCP Server
+- **Tool Hosting**: Manages lifecycle of registered AI tools
+- **Discovery Service**: Enables tool lookup and metadata access  
+- **Execution Engine**: Runs WASM modules with resource controls
+
+### AI MCP Client  
+- **Standard Interface**: Uniform access to all registered tools
+- **Session Management**: Handles authentication and state
+- **Multi-client Support**: CLI, Web, and programmatic access
+
+
 ## How It's Made
 
 **DANP-Engine** is built on four core components that work together to provide a trusted AI MCP runtime:
 
-### IPFS Foundation
+### IPFS Integration
 - **Role**: Provides decentralized, immutable storage for WASM modules and AI tools
 - **Implementation**: 
   - Integrated IPFS nodes for distributed content addressing
