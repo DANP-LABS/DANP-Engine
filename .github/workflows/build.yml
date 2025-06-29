@@ -26,18 +26,25 @@ jobs:
 
     - name: Build DANP-MCP-CLIENT
       run: |
-        GOOS=${{ matrix.platform }} GOARCH=amd64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-CLIENT-${{ matrix.platform }}${{ matrix.platform == 'windows' && '.exe' || '' }} ./cmd/DANP-MCP-CLIENT
+        if [ "${{ matrix.platform }}" = "arm" ]; then
+          GOOS=${{ matrix.platform }} GOARCH=arm64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-CLIENT-${{ matrix.platform }} ./cmd/DANP-MCP-CLIENT
+        else
+          GOOS=${{ matrix.platform }} GOARCH=amd64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-CLIENT-${{ matrix.platform }}${{ matrix.platform == 'windows' && '.exe' || '' }} ./cmd/DANP-MCP-CLIENT
+        fi
 
     - name: Build DANP-MCP-SERVER
       run: |
-        GOOS=${{ matrix.platform }} GOARCH=amd64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-SERVER-${{ matrix.platform }}${{ matrix.platform == 'windows' && '.exe' || '' }} ./cmd/DANP-MCP-SERVER
+        if [ "${{ matrix.platform }}" = "arm" ]; then
+          GOOS=${{ matrix.platform }} GOARCH=arm64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-SERVER-${{ matrix.platform }} ./cmd/DANP-MCP-SERVER
+        else
+          GOOS=${{ matrix.platform }} GOARCH=amd64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-SERVER-${{ matrix.platform }}${{ matrix.platform == 'windows' && '.exe' || '' }} ./cmd/DANP-MCP-SERVER
+        fi
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: DANP-Engine-${{ matrix.platform }}
         path: |
-          bin/DANP-HTTP-${{ matrix.platform }}*
           bin/DANP-MCP-CLIENT-${{ matrix.platform }}*
           bin/DANP-MCP-SERVER-${{ matrix.platform }}*
           bin/*.exe
