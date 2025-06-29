@@ -153,10 +153,48 @@ git clone https://github.com/IceFireLabs/DANP-Engine.git
 ```
 
 ### 2. Build the Project
+
+The project provides several Makefile targets for building and development:
+
+#### Basic Builds
 ```bash
-cd DANP-Engine
-make
+# Build both client and server
+make all
+
+# Build just the client
+make build-client
+
+# Build just the server 
+make build-server
 ```
+
+#### Cross-Compilation
+```bash
+# Build for all platforms (Linux, Windows, macOS, ARM)
+make build-all
+
+# Platform-specific builds
+make build-linux    # Linux amd64
+make build-windows  # Windows amd64 (.exe)
+make build-darwin   # macOS amd64  
+make build-arm      # Linux ARM64
+```
+
+#### Development
+```bash
+# Run client directly (no build)
+make run-client
+
+# Run server directly (no build)
+make run-server
+
+# Clean build artifacts
+make clean
+```
+
+Build flags include version information:
+- `BuildVersion`: Short git commit hash
+- `BuildDate`: UTC timestamp of build
 
 ### 3. Adjust Configuration File
 ```yaml

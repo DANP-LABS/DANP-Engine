@@ -1,63 +1,55 @@
-PROG=bin/DANP-HTTP
-SRCS=./cmd/DANP-HTTP
+# DANP Engine Makefile
+PROG_CLIENT=bin/DANP-MCP-CLIENT
+PROG_SERVER=bin/DANP-MCP-SERVER
+SRCS_CLIENT=./cmd/DANP-MCP-CLIENT
+SRCS_SERVER=./cmd/DANP-MCP-SERVER
 
-INSTALL_PREFIX=/usr/local/DANP-HTTP
-CONF_INSTALL_PREFIX=/usr/local/DANP-HTTP
-
-# git commit hash
+# Version info
 COMMIT_HASH=$(shell git rev-parse --short HEAD || echo "GitNotFound")
-
-# build time
-BUILD_DATE=$(shell date '+%Y-%m-%d %H:%M:%S')
-
-# build opts
-CFLAGS = -ldflags "-s -w  -X \"main.BuildVersion=${COMMIT_HASH}\" -X \"main.BuildDate=$(BUILD_DATE)\""
+BUILD_DATE=$(shell date -u '+%Y-%m-%d %H:%M:%S')
+BUILD_FLAGS=-ldflags "-s -w -X \"main.BuildVersion=${COMMIT_HASH}\" -X \"main.BuildDate=${BUILD_DATE}\""
 
 # Default target
-all: build
+all: build-client build-server
 
-# Create the bin directory if it doesn't exist
+# Create bin directory
 $(shell mkdir -p bin)
 
-# Build for the current platform
-build:
-	go build $(CFLAGS) -o $(PROG) $(SRCS)
+# Build targets
+build-client:
+	go build ${BUILD_FLAGS} -o ${PROG_CLIENT} ${SRCS_CLIENT}
 
-# Build with race detector
-race:
-	go build $(CFLAGS) -race -o $(PROG) $(SRCS)
+build-server:
+	go build ${BUILD_FLAGS} -o ${PROG_SERVER} ${SRCS_SERVER}
 
-# Build for Linux
+# Cross-compilation targets
+build-all: build-linux build-windows build-darwin build-arm
+
 build-linux:
-	GOOS=linux GOARCH=amd64 go build $(CFLAGS) -o $(PROG)-linux $(SRCS)
+	GOOS=linux GOARCH=amd64 go build ${BUILD_FLAGS} -o ${PROG_CLIENT}-linux ${SRCS_CLIENT}
+	GOOS=linux GOARCH=amd64 go build ${BUILD_FLAGS} -o ${PROG_SERVER}-linux ${SRCS_SERVER}
 
-# Build for ARM (e.g., Raspberry Pi)
-build-arm:
-	GOOS=linux GOARCH=arm go build $(CFLAGS) -o $(PROG)-arm $(SRCS)
-
-# Build for Windows
 build-windows:
-	GOOS=windows GOARCH=amd64 go build $(CFLAGS) -o $(PROG)-windows.exe $(SRCS)
+	GOOS=windows GOARCH=amd64 go build ${BUILD_FLAGS} -o ${PROG_CLIENT}-windows.exe ${SRCS_CLIENT}
+	GOOS=windows GOARCH=amd64 go build ${BUILD_FLAGS} -o ${PROG_SERVER}-windows.exe ${SRCS_SERVER}
 
-# Clean up build artifacts
+build-darwin:
+	GOOS=darwin GOARCH=amd64 go build ${BUILD_FLAGS} -o ${PROG_CLIENT}-darwin ${SRCS_CLIENT}
+	GOOS=darwin GOARCH=amd64 go build ${BUILD_FLAGS} -o ${PROG_SERVER}-darwin ${SRCS_SERVER}
+
+build-arm:
+	GOOS=linux GOARCH=arm64 go build ${BUILD_FLAGS} -o ${PROG_CLIENT}-arm ${SRCS_CLIENT}
+	GOOS=linux GOARCH=arm64 go build ${BUILD_FLAGS} -o ${PROG_SERVER}-arm ${SRCS_SERVER}
+
+# Development targets
+run-client:
+	go run ${SRCS_CLIENT}
+
+run-server:
+	go run ${SRCS_SERVER}
+
+# Cleanup
 clean:
-	rm -f $(PROG) $(PROG)-linux $(PROG)-arm $(PROG)-windows.exe
+	rm -f ${PROG_CLIENT}* ${PROG_SERVER}* bin/*.exe
 
-# Install the binary to the specified prefix
-install:
-	install -d $(INSTALL_PREFIX)
-	install $(PROG) $(INSTALL_PREFIX)
-
-# Uninstall the binary
-uninstall:
-	rm -f $(INSTALL_PREFIX)/$(PROG)
-
-MCP_PROG=bin/DANP-MCP
-MCP_SRCS=./cmd/DANP-MCP
-
-.PHONY: all build race build-linux build-arm build-windows clean install uninstall mcp-server build-mcp
-mcp-server:
-	go run cmd/DANP-MCP/main.go
-
-build-mcp:
-	go build $(CFLAGS) -o $(MCP_PROG) $(MCP_SRCS)
+.PHONY: all build-client build-server build-all build-linux build-windows build-darwin build-arm run-client run-server clean
