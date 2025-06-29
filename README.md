@@ -5,16 +5,15 @@
 
 **DANP-Engine** is a trusted runtime for AI Model Context Protocol (MCP), providing a secure execution environment for decentralized AI tools and services. Built on four foundational technologies:
 
-- **IPFS**: Decentralized storage for immutable WASM modules and AI tools
+- **IPFS**: Decentralized storage for immutable WASM MCP AI tools modules
 - **WASM**: Portable, sandboxed execution of AI workloads
 - **AI MCP Server**: Hosts and manages registered AI tools
 - **AI MCP Client**: Provides standardized access to AI capabilities
 
-As an MCP runtime, DANP-Engine enables:
+As an AI MCP runtime, DANP-Engine enables:
 - Trusted execution of AI tools via WASM sandboxing
-- Decentralized hosting and discovery through IPFS
+- IPFS Decentralized Verifiable Storage WASM Tool for AI MCP Server
 - Standardized interfaces via MCP protocol
-- Secure multi-tenant operation with resource isolation
 
 ---
 ## System Architecture
@@ -73,14 +72,7 @@ graph TD
     style MCPServer fill:#e6ffe6,stroke:#333
     style MCPClient fill:#f9e6ff,stroke:#333
 ```
-The architecture consists of four main layers:
 
-* IPFS Storage Layer: Decentralized storage network that provides content-addressable storage for WASM modules and application data
-* WASM Runtime Layer: Distributed execution environment where WASM modules run with AI Agent capabilities
-* Application Layer: Core functionalities exposed to developers including Edge AI, Trusted Computing and Edge Functions
-* Services Layer: Final output services that applications can consume (Compute, Storage, Network)
-
----
 
 ## Core Components and Features
 
