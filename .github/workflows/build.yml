@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        platform: [linux, windows, arm]
+        platform: [linux, windows, arm, darwin]
 
     steps:
     - uses: actions/checkout@v4
@@ -40,11 +40,11 @@ jobs:
           GOOS=${{ matrix.platform }} GOARCH=amd64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-SERVER-${{ matrix.platform }}${{ matrix.platform == 'windows' && '.exe' || '' }} ./cmd/DANP-MCP-SERVER
         fi
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: DANP-Engine-${{ matrix.platform }}
-        path: |
-          bin/DANP-MCP-CLIENT-${{ matrix.platform }}*
-          bin/DANP-MCP-SERVER-${{ matrix.platform }}*
-          bin/*.exe
+    # - name: Upload build artifacts
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: DANP-Engine-${{ matrix.platform }}
+    #     path: |
+    #       bin/DANP-MCP-CLIENT-${{ matrix.platform }}*
+    #       bin/DANP-MCP-SERVER-${{ matrix.platform }}*
+    #       bin/*.exe
