@@ -3,3 +3,4 @@ config/wis_worker_dev.yaml
 example/mcp-client/mcp-client
 front
 cmd/mcp-client/mcp-client
+cmd/MCP-CLIENT/.env
