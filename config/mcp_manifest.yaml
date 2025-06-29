@@ -26,7 +26,7 @@ llm_config:
 # Defines WASM modules and their exposed MCP tools
 modules:
   - name: "hello"
-    #wasm_path: "file:///home/corerman/ICODE/IceFireLabs/dANP-Engine/config/hello.wasm"  # Supports file:// or IPFS:// schemes
+    #wasm_path: "file://config/hello.wasm"  # Supports file:// or IPFS:// schemes
     wasm_path: "IPFS://QmeDsaLTc8dAfPrQ5duC4j5KqPdGbcinEo5htDqSgU8u8Z"  # Supports file:// or IPFS:// schemes
     tools:
       - name: "say_hello"
