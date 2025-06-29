@@ -1,0 +1,32 @@
+# MCP Server Manifest
+server_config:
+  host: "0.0.0.0"
+  port: 18080
+  max_connections: 100
+  timeout: 30s
+
+llm_config:
+  base_url: ""  # Optional base URL for API endpoints
+  provider: "openai"  # Default provider
+  openai:  # OpenAI-specific config
+    api_key: ""
+    model: "gpt-4"
+    temperature: 0.7
+    max_tokens: 2048
+  # Add other provider configs here as needed
+
+# Defines WASM modules and their exposed MCP tools
+modules:
+  - name: "hello"
+    wasm_path: "file:///home/corerman/ICODE/IceFireLabs/dANP-Engine/config/hello.wasm"  # Supports file:// or IPFS:// schemes
+    tools:
+      - name: "say_hello"
+        description: "Greet someone by name"
+        inputs:
+          - name: "name"
+            type: "string"
+            required: true
+            description: "Name to greet"
+        outputs:
+          type: "string"
+          description: "Greeting message"

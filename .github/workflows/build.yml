@@ -1,0 +1,45 @@
+# This workflow will build a golang project for multiple platforms
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [linux, windows, arm]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.24'
+
+    - name: Build for ${{ matrix.platform }}
+      run: |
+        if [ "${{ matrix.platform }}" = "linux" ]; then
+          make build-linux
+        elif [ "${{ matrix.platform }}" = "windows" ]; then
+          make build-windows
+        elif [ "${{ matrix.platform }}" = "arm" ]; then
+          make build-arm
+        else
+          make build
+        fi
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: DANP-Engine-${{ matrix.platform }}
+        path: |
+          bin/DANP-Engine-${{ matrix.platform }}*
+          bin/DANP-Engine-${{ matrix.platform }}.exe
