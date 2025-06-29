@@ -21,13 +21,16 @@
 ## System Architecture
 
 ```mermaid
-graph LR
+graph TD
     %% DANP-Engine Architecture Diagram
-    description[IPFS Trusted Storage + WASM Edge Computing + AI Agents]
+    DANP[DANP-Engine\nTrusted AI MCP Runtime] --> IPFS
+    DANP --> WASM
+    DANP --> MCPServer[AI MCP Server]
+    DANP --> MCPClient[AI MCP Client]
 
-    %% IPFS Storage Layer
-    subgraph ipfs[IPFS Storage Layer]
-        direction TB
+    %% IPFS Component
+    subgraph IPFS[IPFS Storage]
+        direction LR
         ipfs_node1[IPFS Node]
         ipfs_node2[IPFS Node]
         ipfs_node3[IPFS Node]
@@ -35,60 +38,41 @@ graph LR
         ipfs_node2 <--> ipfs_node3
     end
 
-    %% WASM Runtime Layer
-    subgraph runtime[WASM Runtime Layer]
+    %% WASM Component
+    subgraph WASM[WASM Runtime]
         direction LR
-        
-        subgraph node1[Runtime Node 1]
-            wasm1[WASM Engine]
-            agent1[AI Agent]
-            wasm1 --> agent1
-        end
-        
-        subgraph node2[Runtime Node 2]
-            wasm2[WASM Engine]
-            agent2[AI Agent]
-            wasm2 --> agent2
-        end
-        
-        subgraph node3[Runtime Node 3]
-            wasm3[WASM Engine]
-            agent3[AI Agent]
-            wasm3 --> agent3
-        end
+        wasm1[WASM Module]
+        wasm2[WASM Module]
+        wasm3[WASM Module]
     end
 
-    %% Application Layer
-    subgraph apps[Application Layer]
-        direction TB
-        edge_ai[Edge AI]
-        trusted_comp[Trusted Computing]
-        edge_func[Edge Functions]
+    %% MCP Server Component
+    subgraph MCPServer[AI MCP Server]
+        direction LR
+        server1[Server Node]
+        server2[Server Node]
+        server1 <--> server2
     end
 
-    %% Services Layer
-    subgraph services[Services]
+    %% MCP Client Component
+    subgraph MCPClient[AI MCP Client]
         direction LR
-        compute[Compute Service]
-        storage[Storage Service]
-        network[Network Service]
+        client1[Client]
+        client2[Client]
+        client3[Client]
     end
 
     %% Connections
-    ipfs --> runtime
-    node1 --> apps
-    node2 --> apps
-    node3 --> apps
-    apps --> services
-    
+    IPFS --> WASM
+    WASM --> MCPServer
+    MCPServer --> MCPClient
+
     %% Styling
-    style ipfs fill:#e3f9ff,stroke:#333
-    style runtime fill:#fff2e6,stroke:#333
-    style apps fill:#e6ffe6,stroke:#333
-    style services fill:#f9e6ff,stroke:#333
-    
-    classDef tech fill:#f8f9fa,stroke:#333,stroke-width:1px;
-    class description,ipfs_node1,ipfs_node2,ipfs_node3,wasm1,wasm2,wasm3,agent1,agent2,agent3,edge_ai,trusted_comp,edge_func,compute,storage,network tech
+    style DANP fill:#ffebee,stroke:#333,stroke-width:2px
+    style IPFS fill:#e3f9ff,stroke:#333
+    style WASM fill:#fff2e6,stroke:#333
+    style MCPServer fill:#e6ffe6,stroke:#333
+    style MCPClient fill:#f9e6ff,stroke:#333
 ```
 The architecture consists of four main layers:
 
@@ -99,30 +83,40 @@ The architecture consists of four main layers:
 
 ## How It's Made
 
-Here's a breakdown of how **DANP-Engine** was built, including the technologies used, their integration, and notable aspects:
+**DANP-Engine** is built on four core components that work together to provide a trusted AI MCP runtime:
 
-### WebAssembly (WASM) Computing
-- **Technology**: Leveraged WebAssembly for its efficient and portable bytecode format, enabling high-performance computing within the serverless environment.
-- **Integration**: Integrated WebAssembly runtime libraries and tools to compile and execute WASM modules seamlessly within the serverless framework.
+### IPFS Foundation
+- **Role**: Provides decentralized, immutable storage for WASM modules and AI tools
+- **Implementation**: 
+  - Integrated IPFS nodes for distributed content addressing
+  - Uses Filecoin-Lassie for efficient IPFS file retrieval
+  - Supports IPFS Car file extraction via Filecoin-IPLD-Go-Car
 
-### IPFS Integration
-- **Technology**: Utilized IPFS (InterPlanetary File System) for decentralized storage and retrieval of data.
-- **Integration**: Integrated IPFS libraries and APIs to interact with the IPFS network, ensuring secure and decentralized data storage and retrieval.
+### WASM Runtime
+- **Role**: Executes trusted, portable code in a secure sandbox
+- **Implementation**:
+  - Leverages wazero for efficient WASM execution
+  - Uses Extism for WASM plugin management
+  - Supports both local and IPFS-hosted WASM modules
 
-### AI Agent Capabilities
-- **Technology**: Integrated advanced AI frameworks to enable intelligent decision-making, automation, and multi-agent control.
-- **Integration**: Combined AI Agent capabilities with WASM and IPFS to create a powerful, intelligent, and decentralized computing ecosystem.
+### AI MCP Server
+- **Role**: Hosts and manages AI tools and services
+- **Implementation**:
+  - Built with Fiber for high-performance HTTP serving
+  - Provides tool registration and discovery
+  - Manages WASM module lifecycle and execution
 
-### Partner Technologies and Benefits
-- **Filecoin-Lassie**: Leveraged for IPFS file retrieval, enhancing data access capabilities within the serverless environment.
-- **Filecoin-IPLD-Go-Car**: Used for IPFS Car file extraction, enabling efficient handling of IPFS Car files within the project.
-- **Extism**: Integrated for WASM plugin management, facilitating extensibility and customization of the serverless environment through WASM plugins.
-- **wazero**: Utilized for WASM virtual machine capabilities, ensuring efficient execution of WebAssembly code within the serverless framework.
-- **Fiber**: Integrated for high-performance HTTP server functionalities, enhancing network communication and HTTP request handling within the serverless environment.
+### AI MCP Client
+- **Role**: Interfaces with the MCP Server and provides user access
+- **Implementation**:
+  - Supports multiple client implementations (CLI, Web, etc.)
+  - Provides tool discovery and invocation
+  - Handles authentication and session management
 
-### Notable Aspects
-- **Dynamic IPFS Integration**: Dynamically integrated with IPFS using Filecoin-Lassie and IPFS CID references in the configuration, allowing for seamless interaction with IPFS resources.
-- **AI-Driven Automation**: Enabled intelligent automation and decision-making through AI Agent integration, making decentralized computing smarter and more efficient.
+### Integrated Benefits
+- **Trusted Execution**: Combines IPFS immutability with WASM sandboxing
+- **Decentralized AI**: Enables distributed AI tool hosting and execution
+- **Interoperability**: Standard MCP protocol connects all components
 
 ---
 
@@ -228,16 +222,8 @@ We welcome contributions from the community! To contribute to **DANP-Engine**:
 
 ---
 
-## License
-
-This library is dual-licensed under **Apache 2.0** and **MIT** terms.
-
----
-
 ## ❤️ Thanks for Technical Support ❤️
 
 1. [**Filecoin-Lassie**](https://github.com/filecoin-project/lassie/): Support IPFS file retrieval.
 2. [**Filecoin-IPLD-Go-Car**](https://github.com/ipld/go-car): Support IPFS Car file extraction.
-3. [**Extism**](https://extism.org/): WASM plugin management.
-4. [**wazero**](https://wazero.io/): WASM virtual machine.
-5. [**Fiber**](https://gofiber.io/): High-performance HTTP server.
+3. [**mcp-go**](https://github.com/mark3labs/mcp-go): High-performance HTTP server.
