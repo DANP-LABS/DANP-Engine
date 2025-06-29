@@ -1,81 +1,66 @@
 package ipfs
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
-// GetDATAFromIPFSCID retrieves the data from an IPFS CID, extracts the WASM files, and returns them as byte slices.
-//
-// Parameters:
-//   - ipfsC: An instance of the IPFSClient struct, which provides methods for interacting with the IPFS network.
-//   - cid: The CID (Content Identifier) of the data to be retrieved from the IPFS network.
-//
-// Returns:
-//   - D: A slice of byte slices, each representing the content of a WASM file extracted from the CID.
-//   - err: An error, if any, encountered during the retrieval or extraction process.
-//
-// Note: This function assumes that the CID contains WASM files and that the extracted files are stored in a temporary directory.
-func GetDATAFromIPFSCID(ipfsC *IPFSClient, cid string) (D [][]byte, err error) {
-	// Retrieve the data from the given CID using the provided IPFSClient instance.
-	data, err := ipfsC.GetDataFromCID(cid)
+// ExtractWASMFromCID retrieves WASM files from IPFS by CID and returns them as byte slices.
+// client: Configured IPFS client
+// cid: Content Identifier of the data to retrieve
+// Returns: Slice of WASM file contents and any error encountered
+func ExtractWASMFromCID(client *Client, cid string) ([][]byte, error) {
+	// Retrieve CAR data from IPFS
+	data, err := client.Retrieve(cid)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to retrieve CID: %w", err)
 	}
 
-	// Create a temporary file to store the CAR (IPFS Content Addressing: References) data.
-	fcar, err := os.CreateTemp("", cid+"Car")
+	// Create temp file for CAR data
+	carFile, err := os.CreateTemp("", cid+"Car")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create temp file: %w", err)
+	}
+	defer os.Remove(carFile.Name())
+
+	// Write CAR data to temp file
+	if _, err := carFile.Write(data); err != nil {
+		return nil, fmt.Errorf("failed to write CAR data: %w", err)
+	}
+	carFile.Close()
+
+	// Create temp directory for extraction
+	extractDir, err := os.MkdirTemp("", cid+"CarExtractOutputDir")
+	if err != nil {
+		return nil, fmt.Errorf("failed to create temp dir: %w", err)
+	}
+	defer os.RemoveAll(extractDir)
+
+	// Extract CAR file contents
+	if _, err := ExtractCarFile(carFile.Name(), extractDir); err != nil {
+		return nil, fmt.Errorf("failed to extract CAR file: %w", err)
 	}
 
-	// Defer the removal of the temporary file when the function exits.
-	defer os.Remove(fcar.Name())
-
-	// Write the retrieved data to the temporary file.
-	_, err = fcar.Write(data)
+	// Read all extracted files
+	entries, err := os.ReadDir(extractDir)
 	if err != nil {
-		return nil, err
-	}
-	fcar.Close()
-
-	// Create a temporary directory to store the extracted files.
-	wasmdname, err := os.MkdirTemp("", cid+"CarExtractOutputDir")
-	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read extract dir: %w", err)
 	}
 
-	// Defer the removal of the temporary directory when the function exits.
-	defer os.RemoveAll(wasmdname)
-
-	// Extract the files from the CAR data to the temporary directory.
-	_, err = ExtractCarFile(fcar.Name(), wasmdname)
-	if err != nil {
-		return nil, err
-	}
-
-	// Read the contents of the extracted files in the temporary directory.
-	entries, err := os.ReadDir(wasmdname)
-	if err != nil {
-		return nil, err
-	}
-
-	// Iterate over the contents of the temporary directory.
-	for _, e := range entries {
-		// Skip directories.
-		if e.IsDir() {
+	var wasmFiles [][]byte
+	for _, entry := range entries {
+		if entry.IsDir() {
 			continue
 		}
 
-		// Get the path of the current file.
-		wasmPath := wasmdname + "/" + e.Name()
-
-		// Read the content of the current file as bytes.
-		wasmdata, err := os.ReadFile(wasmPath)
+		filePath := extractDir + "/" + entry.Name()
+		content, err := os.ReadFile(filePath)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to read file %s: %w", entry.Name(), err)
 		}
 
-		// Append the content of the current file to the slice of byte slices.
-		D = append(D, wasmdata)
+		wasmFiles = append(wasmFiles, content)
 	}
 
-	return
+	return wasmFiles, nil
 }

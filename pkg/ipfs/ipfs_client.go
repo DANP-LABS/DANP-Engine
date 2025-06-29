@@ -1,88 +1,75 @@
 package ipfs
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net/http"
 	"time"
 )
 
-// IPFSClient represents an IPFS client with its scheme, host, port and LassieClientURL details
-type IPFSClient struct {
-	// Scheme is the protocol scheme (e.g. http, https) used for communication with the IPFS node
-	scheme string
-
-	// Host is the hostname or IP address of the IPFS node
-	host string
-
-	// Port is the TCP port number used for communication with the IPFS node
-	port int
-
-	// LassieClientURL is the URL of the Lassie client
-	LassieClientURL string
+// Client represents a connection to an IPFS node with configurable network settings.
+type Client struct {
+	scheme   string // Protocol scheme (http/https)
+	host     string // Node hostname or IP
+	port     int    // Node port number
+	baseURL  string // Precomputed base URL for requests
+	timeout  time.Duration // HTTP request timeout
 }
 
-// NewIPFSClient creates a new instance of IPFSClient with the provided scheme, host, and port.
-// It also sets the LassieClientURL based on the provided scheme, host, and port.
-func NewIPFSClient(scheme string, host string, port int) *IPFSClient {
-
-	return &IPFSClient{
-		scheme:          scheme,
-		host:            host,
-		port:            port,
-		LassieClientURL: fmt.Sprintf("%s://%s:%d/ipfs", scheme, host, port),
+// NewClient creates a configured IPFS client instance.
+// scheme: Protocol (http/https)
+// host: Node hostname/IP
+// port: Node port
+// timeout: HTTP request timeout (default 20s if zero)
+func NewClient(scheme, host string, port int, timeout time.Duration) *Client {
+	if timeout == 0 {
+		timeout = 20 * time.Second
 	}
 
+	return &Client{
+		scheme:  scheme,
+		host:    host,
+		port:    port,
+		baseURL: fmt.Sprintf("%s://%s:%d/ipfs", scheme, host, port),
+		timeout: timeout,
+	}
 }
 
-// GetURLFromCID returns the URL of the given CID on the IPFS node.
-//
-// The function constructs the URL by appending the provided CID to the LassieClientURL of the IPFSClient.
-//
-// Parameters:
-//   - cid (string) - The content identifier (CID) of the data to retrieve.
-//
-// Returns:
-//   - cidUrl (string) - The constructed URL of the given CID.
-//   - err (error) - An error if any occurs while constructing the URL.
-func (ipfsC *IPFSClient) GetURLFromCID(cid string) (cidUrl string, err error) {
-	cidUrl = fmt.Sprintf("%s/%s", ipfsC.LassieClientURL, cid)
-
-	return cidUrl, err
+// URLForCID constructs the full retrieval URL for a given CID.
+func (c *Client) URLForCID(cid string) string {
+	return fmt.Sprintf("%s/%s", c.baseURL, cid)
 }
 
-// GetDataFromCID retrieves the data associated with the given CID from the IPFS node.
-//
-// The function constructs an HTTP GET request to the LassieClientURL of the IPFSClient with the provided CID appended.
-// It then sends the request and reads the response body into a byte slice.
-//
-// Parameters:
-//   - cid (string) - The content identifier (CID) of the data to retrieve.
-//
-// Returns:
-//   - data ([]byte) - The retrieved data from the IPFS node.
-//   - err (error) - An error if any occurs while constructing the request or reading the response.
-func (ipfsC *IPFSClient) GetDataFromCID(cid string) (data []byte, err error) {
-	cidUrl := fmt.Sprintf("%s/%s", ipfsC.LassieClientURL, cid)
+// Retrieve fetches content from IPFS by CID.
+// Returns the content bytes or an error if the request fails.
+func (c *Client) Retrieve(cid string) ([]byte, error) {
+	return c.retrieveWithContext(context.Background(), cid)
+}
 
-	req, err := http.NewRequest("GET", cidUrl, nil)
-	req.Header.Set("Accept", "*/*")
+// retrieveWithContext handles the actual HTTP request with context support.
+func (c *Client) retrieveWithContext(ctx context.Context, cid string) ([]byte, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", c.URLForCID(cid), nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("request creation failed: %w", err)
 	}
+	req.Header.Set("Accept", "*/*")
 
-	client := &http.Client{Timeout: time.Second * 20}
-
+	client := &http.Client{Timeout: c.timeout}
 	resp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("request failed: %w", err)
 	}
 	defer resp.Body.Close()
 
-	data, err = io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("unexpected status: %s", resp.Status)
 	}
 
-	return
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read failed: %w", err)
+	}
+
+	return data, nil
 }

@@ -64,11 +64,12 @@ func (w *WASMEngine) LoadModule(ctx context.Context, path string) error {
 		cid := strings.TrimPrefix(path, "IPFS://")
 		log.Printf("Loading WASM module from IPFS CID: %s", cid)
 		
-		ipfsC := ipfs.NewIPFSClient(w.config.IPFS.LassieNet.Scheme,
+		ipfsC := ipfs.NewClient(w.config.IPFS.LassieNet.Scheme,
 			w.config.IPFS.LassieNet.Host,
-			w.config.IPFS.LassieNet.Port)
+			w.config.IPFS.LassieNet.Port,
+			0) // Default timeout
 
-		data, err := ipfs.GetDATAFromIPFSCID(ipfsC, cid)
+		data, err := ipfs.ExtractWASMFromCID(ipfsC, cid)
 		if err != nil {
 			return fmt.Errorf("failed to load WASM from IPFS: %w", err)
 		}
@@ -83,11 +84,12 @@ func (w *WASMEngine) LoadModule(ctx context.Context, path string) error {
 			manifest.Wasm = append(manifest.Wasm, extism.WasmFile{Path: path})
 		} else if w.config.IPFS.Enable {
 			log.Printf("Loading WASM module from IPFS (direct CID): %s", path)
-			ipfsC := ipfs.NewIPFSClient(w.config.IPFS.LassieNet.Scheme,
+			ipfsC := ipfs.NewClient(w.config.IPFS.LassieNet.Scheme,
 				w.config.IPFS.LassieNet.Host,
-				w.config.IPFS.LassieNet.Port)
+				w.config.IPFS.LassieNet.Port,
+				0) // Default timeout
 
-			data, err := ipfs.GetDATAFromIPFSCID(ipfsC, path)
+			data, err := ipfs.ExtractWASMFromCID(ipfsC, path)
 			if err != nil {
 				return fmt.Errorf("failed to load WASM from IPFS: %w", err)
 			}
