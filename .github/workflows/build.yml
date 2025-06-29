@@ -27,7 +27,7 @@ jobs:
     - name: Build DANP-MCP-CLIENT
       run: |
         if [ "${{ matrix.platform }}" = "arm" ]; then
-          GOOS=${{ matrix.platform }} GOARCH=arm64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-CLIENT-${{ matrix.platform }} ./cmd/DANP-MCP-CLIENT
+          GOOS=linux GOARCH=arm64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-CLIENT-${{ matrix.platform }} ./cmd/DANP-MCP-CLIENT
         else
           GOOS=${{ matrix.platform }} GOARCH=amd64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-CLIENT-${{ matrix.platform }}${{ matrix.platform == 'windows' && '.exe' || '' }} ./cmd/DANP-MCP-CLIENT
         fi
@@ -35,7 +35,7 @@ jobs:
     - name: Build DANP-MCP-SERVER
       run: |
         if [ "${{ matrix.platform }}" = "arm" ]; then
-          GOOS=${{ matrix.platform }} GOARCH=arm64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-SERVER-${{ matrix.platform }} ./cmd/DANP-MCP-SERVER
+          GOOS=linux GOARCH=arm64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-SERVER-${{ matrix.platform }} ./cmd/DANP-MCP-SERVER
         else
           GOOS=${{ matrix.platform }} GOARCH=amd64 go build -ldflags "-s -w -X \"main.BuildVersion=${{ github.sha }}\" -X \"main.BuildDate=$(date -u '+%Y-%m-%d %H:%M:%S')\"" -o bin/DANP-MCP-SERVER-${{ matrix.platform }}${{ matrix.platform == 'windows' && '.exe' || '' }} ./cmd/DANP-MCP-SERVER
         fi
