@@ -1,5 +1,6 @@
 # DANP-Engine: Trusted AI MCP Runtime
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/DANP-LABS/DANP-Engine)
 ![build](https://github.com/DANP-LABS/DANP-Engine/actions/workflows/build.yml/badge.svg)
 ![test](https://github.com/DANP-LABS/DANP-Engine/actions/workflows/test.yml/badge.svg)
 
