@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/IceFireLabs/DANP-Engine/core/mcp"
+	"github.com/DANP-LABS/DANP-Engine/core/mcp"
 )
 
 func main() {

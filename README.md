@@ -1,7 +1,7 @@
 # DANP-Engine: Trusted AI MCP Runtime
 
-![build](https://github.com/IceFireLabs/DANP-Engine/actions/workflows/build.yml/badge.svg)
-![test](https://github.com/IceFireLabs/DANP-Engine/actions/workflows/test.yml/badge.svg)
+![build](https://github.com/DANP-LABS/DANP-Engine/actions/workflows/build.yml/badge.svg)
+![test](https://github.com/DANP-LABS/DANP-Engine/actions/workflows/test.yml/badge.svg)
 
 **DANP-Engine** is a trusted runtime for AI Model Context Protocol (MCP), providing a secure execution environment for decentralized AI tools and services. Built on four foundational technologies:
 
@@ -140,7 +140,7 @@ graph TD
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/IceFireLabs/DANP-Engine.git
+git clone https://github.com/DANP-LABS/DANP-Engine.git
 ```
 
 ### 2. Build the Project

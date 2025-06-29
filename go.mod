@@ -1,4 +1,4 @@
-module github.com/IceFireLabs/DANP-Engine
+module github.com/DANP-LABS/DANP-Engine
 
 go 1.24.3
 

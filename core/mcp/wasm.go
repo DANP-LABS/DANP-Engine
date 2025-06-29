@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/IceFireLabs/DANP-Engine/pkg/ipfs"
+	"github.com/DANP-LABS/DANP-Engine/pkg/ipfs"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 	extism "github.com/extism/go-sdk"
