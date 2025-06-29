@@ -1,4 +1,4 @@
-# DANP-Engine
+# DANP-Engine: Trusted AI MCP Runtime
 
 ![build](https://github.com/IceFireLabs/DANP-Engine/actions/workflows/build.yml/badge.svg)
 ![test](https://github.com/IceFireLabs/DANP-Engine/actions/workflows/test.yml/badge.svg)
