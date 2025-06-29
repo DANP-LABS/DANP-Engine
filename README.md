@@ -3,7 +3,7 @@
 ![build](https://github.com/IceFireLabs/DANP-Engine/actions/workflows/build.yml/badge.svg)
 ![test](https://github.com/IceFireLabs/DANP-Engine/actions/workflows/test.yml/badge.svg)
 
-**DANP-Engine** is an innovative framework that seamlessly integrates **WebAssembly (WASM) computing**, **IPFS storage**, and **AI Agent capabilities** to deliver a robust, serverless solution for decentralized applications (dApps). Designed to empower developers with cutting-edge technologies, this project revolutionizes decentralized computing by combining the efficiency of WASM, the reliability of IPFS, and the intelligence of AI Agents.
+**DANP-Engine** is a trusted AI MCP runtime built on **IPFS**, **WASM**, **AI MCP Server** and **AI MCP Client**. The AI MCP tools modules are stored on decentralized IPFS immutable trusted storage. This innovative framework seamlessly integrates WebAssembly computing, IPFS storage, and AI Agent capabilities to deliver a robust, serverless solution for decentralized applications (dApps). Designed to empower developers with cutting-edge technologies, this project revolutionizes decentralized computing by combining the efficiency of WASM, the reliability of IPFS, and the intelligence of AI Agents.
 
 ![image](https://github.com/user-attachments/assets/45bf263a-1624-49a5-b113-8d7e430a4d18)
 
@@ -141,99 +141,77 @@ make
 
 ### 3. Adjust Configuration File
 ```yaml
-app-type: "DANP-Engine-WORKER"
+# MCP Server Manifest
+server_config:
+  host: "0.0.0.0"
+  port: 18080
+  max_connections: 100
+  timeout: 30s
 
-# The network model of HTTP handle: NetPoll (gin) or RAWEPOLL (fiber)
-net-model: "NETPOLL"
+ipfs:
+  enable: true  # Set to true to enable IPFS support
+  lassie_net:
+    scheme: "http"  # http or https
+    host: "127.0.0.1"
+    port: 31999
+  cids: []  # Optional list of pre-loaded CIDs
 
-# Process inflow traffic network configuration
-NetWork:
-  bind-network: "TCP" # Network transport layer type: TCP | UDP
-  protocol-type: "HTTP" # Application layer network protocol: HTTP | RESP | QUIC
-  bind-address: "127.0.0.1:28080" # Network listening address
+llm_config:
+  base_url: ""  # Optional base URL for API endpoints
+  provider: "openai"  # Default provider
+  openai:  # OpenAI-specific config
+    api_key: ""
+    model: "gpt-4"
+    temperature: 0.7
+    max_tokens: 2048
+  # Add other provider configs here as needed
 
-# Runtime debug option
-debug:
-  enable: false
-  pprof-bind-addr: "127.0.0.1:19090"
+# Defines WASM modules and their exposed MCP tools
+modules:
+  - name: "hello"
+    #wasm_path: "file:///home/corerman/ICODE/IceFireLabs/dANP-Engine/config/hello.wasm"  # Supports file:// or IPFS:// schemes
+    wasm_path: "IPFS://QmeDsaLTc8dAfPrQ5duC4j5KqPdGbcinEo5htDqSgU8u8Z"  # Supports file:// or IPFS:// schemes
+    tools:
+      - name: "say_hello"
+        description: "Greet someone by name"
+        inputs:
+          - name: "name"
+            type: "string"
+            required: true
+            description: "Name to greet"
+        outputs:
+          type: "string"
+          description: "Greeting message"
 
-wasm-modules-files:
-  enable: false
-  path:
-    - "hello.wasm"
-
-wasm-modules-ipfs:
-  enable: true
-  lassie-net:
-    scheme: "http"
-    host: "38.45.67.159" # Filecoin Lassie daemon bind IP (temporary address; visit https://github.com/filecoin-project/lassie for setup)
-    port: 62156 # Filecoin Lassie daemon bind Port
-  cids:
-    - "QmeDsaLTc8dAfPrQ5duC4j5KqPdGbcinEo5htDqSgU8u8Z" # WASM IPFS CID
 ```
 
-### 4. Load Configuration and Run
+### 4. Load Configuration and Run MCP Server
 ```bash
-DANP-Engine -c wis_worker.yaml
+go run cmd/DANP-MCP-SERVER/main.go
 ```
 
-### 5. Test the IPFS Version of WASM Serverless
+### 5. Interact with MCP Server using Client
 ```bash
-curl -d "DANP-Engine" "http://localhost:28080"
-
-👋 Hello DANP-Engine%
+go run cmd/DANP-MCP-CLIENT/main.go -http http://localhost:18080/
 ```
 
----
-
-## Performance Testing
-
+### 6. Example AI Interaction
 ```bash
-hey -n 1000000 -c 50 -m POST \
--d 'DANP-Engine' \
-"http://127.0.0.1:28080"
+# Server startup log showing WASM module loading from IPFS
+2025/06/29 14:06:10 Loading WASM module from IPFS CID: QmeDsaLTc8dAfPrQ5duC4j5KqPdGbcinEo5htDqSgU8u8Z
+2025/06/29 14:06:10 Successfully loaded WASM module: IPFS://QmeDsaLTc8dAfPrQ5duC4j5KqPdGbcinEo5htDqSgU8u8Z
+2025/06/29 14:06:10 Registering tool: say_hello
+2025/06/29 14:06:10 MCP server listening on 0.0.0.0:18080
 
-Summary:
-  Total:        25.5373 secs
-  Slowest:      0.0360 secs
-  Fastest:      0.0001 secs
-  Average:      0.0013 secs
-  Requests/sec: 39158.4411
-  
-  Total data:   31000000 bytes
-  Size/request: 31 bytes
+# Client interaction example
+Enter your request (empty line to submit, 'exit' to quit):
+> Could you please greet my friend John for me?
+> 
 
-Response time histogram:
-  0.000 [1]     |
-  0.004 [995857]        |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  0.007 [3829]  |
-  0.011 [205]   |
-  0.014 [22]    |
-  0.018 [14]    |
-  0.022 [18]    |
-  0.025 [4]     |
-  0.029 [0]     |
-  0.032 [0]     |
-  0.036 [50]    |
+AI Response:
+I've greeted your friend John for you! Here's the message: 
 
-Latency distribution:
-  10% in 0.0002 secs
-  25% in 0.0004 secs
-  50% in 0.0014 secs
-  75% in 0.0017 secs
-  90% in 0.0021 secs
-  95% in 0.0024 secs
-  99% in 0.0031 secs
-
-Details (average, fastest, slowest):
-  DNS+dialup:   0.0000 secs, 0.0001 secs, 0.0360 secs
-  DNS-lookup:   0.0000 secs, 0.0000 secs, 0.0000 secs
-  req write:    0.0000 secs, 0.0000 secs, 0.0135 secs
-  resp wait:    0.0012 secs, 0.0000 secs, 0.0349 secs
-  resp read:    0.0000 secs, 0.0000 secs, 0.0049 secs
-
-Status code distribution:
-  [200] 1000000 responses
+👋 Hello John
 ```
 
 ---
