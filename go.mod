@@ -52,3 +52,5 @@ require (
 	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 	lukechampine.com/blake3 v1.4.1 // indirect
 )
+
+replace github.com/IceFireLabs/dANP-Engine/pkg/mcpclient => ./pkg/mcpclient
