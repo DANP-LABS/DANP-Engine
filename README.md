@@ -274,11 +274,3 @@ We welcome contributions from the community! To contribute to **DANP-Engine**:
 3. Make your changes and commit them (`git commit -am 'Add new feature'`).
 4. Push your changes to the branch (`git push origin feature/your-feature`).
 5. Create a new Pull Request.
-
----
-
-## ❤️ Thanks for Technical Support ❤️
-
-1. [**Filecoin-Lassie**](https://github.com/filecoin-project/lassie/)
-2. [**Filecoin-IPLD-Go-Car**](https://github.com/ipld/go-car)
-3. [**mcp-go**](https://github.com/mark3labs/mcp-go)
