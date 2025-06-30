@@ -279,6 +279,6 @@ We welcome contributions from the community! To contribute to **DANP-Engine**:
 
 ## ❤️ Thanks for Technical Support ❤️
 
-1. [**Filecoin-Lassie**](https://github.com/filecoin-project/lassie/): Support IPFS file retrieval.
-2. [**Filecoin-IPLD-Go-Car**](https://github.com/ipld/go-car): Support IPFS Car file extraction.
-3. [**mcp-go**](https://github.com/mark3labs/mcp-go): High-performance HTTP server.
+1. [**Filecoin-Lassie**](https://github.com/filecoin-project/lassie/)
+2. [**Filecoin-IPLD-Go-Car**](https://github.com/ipld/go-car)
+3. [**mcp-go**](https://github.com/mark3labs/mcp-go)
