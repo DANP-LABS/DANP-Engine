@@ -19,8 +19,10 @@ import (
 
 // MCPServer represents the core MCP server implementation
 type MCPServer struct {
-	server *server.MCPServer
-	config *Config
+	server          *server.MCPServer
+	config          *Config
+	wasmEngine      *WASMEngine
+	registeredTools []string
 }
 
 // Config holds MCP server configuration
@@ -135,6 +137,7 @@ func NewMCPServer(config *Config) *MCPServer {
 
 	// Register WASM module tools from config
 	log.Printf("Registering %d WASM modules from config", len(config.Modules))
+	registeredTools := []string{}
 	for _, module := range config.Modules {
 		log.Printf("Processing module: %s (WASM path: %s)", module.Name, module.WASMPath)
 		log.Printf("Loading module with %d tools", len(module.Tools))
@@ -149,12 +152,17 @@ func NewMCPServer(config *Config) *MCPServer {
 			log.Printf("Failed to register tools from WASM module %s: %v", module.WASMPath, err)
 		} else {
 			log.Printf("Successfully registered %d tools for module: %s", len(module.Tools), module.Name)
+			for _, tool := range module.Tools {
+				registeredTools = append(registeredTools, tool.Name)
+			}
 		}
 	}
 
 	return &MCPServer{
-		server: mcpServer,
-		config: config,
+		server:          mcpServer,
+		config:          config,
+		wasmEngine:      wasmEngine,
+		registeredTools: registeredTools,
 	}
 }
 
@@ -186,19 +194,9 @@ func (s *MCPServer) Start() error {
 			return
 		}
 
-		// Get all registered tools
-		toolNames := []string{}
-
-		// Manually track tools from our config
-		for _, module := range s.config.Modules {
-			for _, tool := range module.Tools {
-				toolNames = append(toolNames, tool.Name)
-			}
-		}
-
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"tools": toolNames,
+			"tools": s.registeredTools,
 		})
 	})
 

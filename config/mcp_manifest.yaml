@@ -41,7 +41,7 @@ modules:
           description: "Greeting message"
 
   - name: "data_validation"
-    wasm_path: "file://wasm-examples/data-validation/validate.wasm2"
+    wasm_path: "file://wasm-examples/data-validation/validate.wasm"
     tools:
       - name: "validate_data"
         description: "Validate a JSON string to ensure it contains a 'signature' key"
