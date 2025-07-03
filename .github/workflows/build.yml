@@ -48,3 +48,30 @@ jobs:
     #       bin/DANP-MCP-CLIENT-${{ matrix.platform }}*
     #       bin/DANP-MCP-SERVER-${{ matrix.platform }}*
     #       bin/*.exe
+
+  build-wasm:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.24'
+
+    - name: Install TinyGo
+      run: |
+        wget https://github.com/tinygo-org/tinygo/releases/download/v0.32.0/tinygo0.32.0.linux-amd64.tar.gz
+        tar -xzf tinygo0.32.0.linux-amd64.tar.gz
+        sudo mv tinygo /usr/local
+
+    - name: Build WASM Modules
+      run: |
+        for dir in wasm-examples/*/; do
+          MODULE_NAME=$(basename "$dir")
+          echo "Building $MODULE_NAME"
+          cd "$dir" && \
+          go mod tidy \
+          GOOS=wasip1 GOARCH=wasm tinygo build -o "$MODULE_NAME".wasm -target wasi -opt=z -no-debug -scheduler=none main.go
+          cd -
+        done
