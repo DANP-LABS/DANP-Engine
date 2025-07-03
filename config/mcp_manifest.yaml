@@ -39,3 +39,17 @@ modules:
         outputs:
           type: "string"
           description: "Greeting message"
+
+  - name: "data_validation"
+    wasm_path: "file://wasm-examples/data-validation/validate.wasm"
+    tools:
+      - name: "validate_data"
+        description: "Validate a JSON string to ensure it contains a 'signature' key"
+        inputs:
+          - name: "json_data"
+            type: "string"
+            required: true
+            description: "The JSON data to validate"
+        outputs:
+          type: "string"
+          description: "A JSON string indicating success or failure"
