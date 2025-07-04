@@ -71,7 +71,8 @@ jobs:
           MODULE_NAME=$(basename "$dir")
           echo "Building $MODULE_NAME"
           cd "$dir" && \
-          go mod tidy \
+          go mod init "$MODULE_NAME" >/dev/null 2>&1 && \
+          go get github.com/extism/go-pdk && \
           GOOS=wasip1 GOARCH=wasm tinygo build -o "$MODULE_NAME".wasm -target wasi -opt=z -no-debug -scheduler=none main.go
           cd -
         done
