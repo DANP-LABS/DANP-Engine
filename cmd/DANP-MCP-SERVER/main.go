@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -10,6 +11,27 @@ import (
 
 	"github.com/DANP-LABS/DANP-Engine/core/mcp"
 )
+
+// setupWallet handles the creation or loading of the wallet.
+func setupWallet(walletPath string) (*mcp.Wallet, error) {
+	log.Println("Initiating wallet setup...")
+
+	walletPassword := os.Getenv("WALLET_PASSWORD")
+	if walletPassword == "" {
+		return nil, fmt.Errorf("WALLET_PASSWORD environment variable not set. Please set it to secure your wallet")
+	}
+	log.Println("WALLET_PASSWORD environment variable found.")
+
+	log.Printf("Attempting to load or create wallet from %s...", walletPath)
+	wallet, err := mcp.GetOrCreateWallet(walletPath, walletPassword)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get or create wallet: %w", err)
+	}
+
+	log.Printf("Wallet loaded successfully. Address: %s", wallet.Address.Hex())
+	log.Println("Wallet setup complete.")
+	return wallet, nil
+}
 
 func main() {
 	// Create a context that will be canceled on interrupt
@@ -24,6 +46,13 @@ func main() {
 		log.Println("Received shutdown signal, gracefully shutting down...")
 		cancel()
 	}()
+
+	// Wallet setup
+	wallet, err := setupWallet("config/wallet.json")
+	if err != nil {
+		log.Fatalf("Wallet setup failed: %v", err)
+	}
+	log.Printf("Server is using wallet address: %s", wallet.Address.Hex())
 
 	// Create and start the server
 	server, err := mcp.NewServer("config/mcp_manifest.yaml")
@@ -43,16 +72,17 @@ func main() {
 	}()
 
 	log.Println("MCP server started and running")
-	
+
 	// Wait for context cancellation
 	<-ctx.Done()
 	log.Println("Shutting down MCP server")
-	
+
 	// Gracefully stop the server
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer shutdownCancel()
-	
+
 	if err := server.Stop(shutdownCtx); err != nil {
 		log.Printf("Error during server shutdown: %v", err)
 	}
 }
+
