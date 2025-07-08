@@ -142,9 +142,32 @@ graph TD
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/DANP-LABS/DANP-Engine.git
+cd DANP-Engine
 ```
 
-### 2. Build the Project
+### 2. Configure Your Wallet
+The MCP Server requires a Web3 wallet to operate. The wallet's private key is encrypted in a `wallet.json` file, which is protected by a password.
+
+**Set the Wallet Password**
+
+You must provide this password to the server via the `WALLET_PASSWORD` environment variable.
+
+You can set it directly in your terminal:
+```bash
+export WALLET_PASSWORD="your-strong-password-here"
+```
+
+Alternatively, you can create a `.env` file in the `cmd/DANP-MCP-SERVER/` directory. This file is ignored by Git, so your password will not be committed.
+
+**Example `cmd/DANP-MCP-SERVER/.env` file:**
+```
+# This password encrypts your wallet.json file.
+# Keep this password and your wallet file secure.
+WALLET_PASSWORD="your-strong-password-here"
+```
+When the server starts for the first time, it will automatically generate a `config/wallet.json` file for you using this password. **Do not commit `config/wallet.json` to version control.**
+
+### 3. Build the Project
 
 The project provides several Makefile targets for building and development:
 
