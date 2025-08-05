@@ -3,7 +3,7 @@ module github.com/DANP-LABS/DANP-Engine
 go 1.24.3
 
 require (
-	github.com/ethereum/go-ethereum v1.16.1
+	github.com/ethereum/go-ethereum v1.16.2
 	github.com/extism/go-sdk v1.7.1
 	github.com/ipfs/go-cid v0.5.0
 	github.com/ipfs/go-unixfsnode v1.10.1
