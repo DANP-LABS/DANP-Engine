@@ -5,7 +5,7 @@ go 1.24.3
 require (
 	github.com/ethereum/go-ethereum v1.16.5
 	github.com/extism/go-sdk v1.7.1
-	github.com/ipfs/go-cid v0.5.0
+	github.com/ipfs/go-cid v0.6.0
 	github.com/ipfs/go-unixfsnode v1.10.2
 	github.com/ipld/go-car/v2 v2.16.0
 	github.com/ipld/go-codec-dagpb v1.7.0
