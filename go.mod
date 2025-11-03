@@ -3,7 +3,7 @@ module github.com/DANP-LABS/DANP-Engine
 go 1.24.3
 
 require (
-	github.com/ethereum/go-ethereum v1.16.5
+	github.com/ethereum/go-ethereum v1.16.6
 	github.com/extism/go-sdk v1.7.1
 	github.com/ipfs/go-cid v0.6.0
 	github.com/ipfs/go-unixfsnode v1.10.2
@@ -18,6 +18,7 @@ require (
 )
 
 require (
+	github.com/ProjectZKM/Ziren/crates/go-runtime/zkvm_runtime v0.0.0-20251001021608-1fe7b43fc4d6 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/bits-and-blooms/bitset v1.20.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
