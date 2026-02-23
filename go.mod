@@ -11,7 +11,7 @@ require (
 	github.com/ipld/go-codec-dagpb v1.7.0
 	github.com/ipld/go-ipld-prime v0.22.0
 	github.com/joho/godotenv v1.5.1
-	github.com/mark3labs/mcp-go v0.43.2
+	github.com/mark3labs/mcp-go v0.44.0
 	github.com/sashabaranov/go-openai v1.41.2
 	github.com/tetratelabs/wazero v1.11.0
 	gopkg.in/yaml.v3 v3.0.1
