@@ -1,6 +1,6 @@
 module github.com/DANP-LABS/DANP-Engine
 
-go 1.24.6
+go 1.25.0
 
 require (
 	github.com/ethereum/go-ethereum v1.17.3
@@ -13,7 +13,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/mark3labs/mcp-go v0.47.1
 	github.com/sashabaranov/go-openai v1.41.2
-	github.com/tetratelabs/wazero v1.11.0
+	github.com/tetratelabs/wazero v1.12.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -59,7 +59,7 @@ require (
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/exp v0.0.0-20260112195511-716be5621a96 // indirect
 	golang.org/x/sync v0.19.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/sys v0.44.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
 	lukechampine.com/blake3 v1.4.1 // indirect
